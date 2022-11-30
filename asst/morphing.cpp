@@ -214,48 +214,53 @@ Image warp(const Image &im, const vector<Segment> &src_segs,
 
 
 
-vector<Image> morph(const Image &im_before, const Image &im_after,
-                    const vector<Segment> &segs_before,
-                    const vector<Segment> &segs_after, int N, float a, float b,
-                    float p) {
-  // --------- HANDOUT  PS05 ------------------------------
-  // return a vector of N+2 images: the two inputs plus N images that morphs
-  // between im_before and im_after for the corresponding segments. 
-  //im_before
-  // should be the first image, im_after the last.
-  vector<Image> morphedImages;
-  //adding starting image
-  morphedImages.push_back(im_before);
 
-  for (int n = 1; n <= N; n++) {
-    // creating img to be added
-    Image imgN(im_before.width(), im_before.height(), im_before.channels());
 
-    float t = n / float(N + 1); //time constant adjustment
 
-    // build target
-    vector<Segment> targetSegments;
-    for (int i = 0; i < segs_before.size(); i++) {
 
-      //creating segment by calculating p and q vectors using before and after segments
-      Vec2f P = ((segs_after[i].getP() - segs_before[i].getP()) * t) + segs_before[i].getP();
-      Vec2f Q = ((segs_after[i].getQ() - segs_before[i].getQ()) * t) + segs_before[i].getQ();
 
-      targetSegments.push_back(Segment(P, Q));
-    }
+// vector<Image> morph(const Image &im_before, const Image &im_after,
+//                     const vector<Segment> &segs_before,
+//                     const vector<Segment> &segs_after, int N, float a, float b,
+//                     float p) {
+//   // --------- HANDOUT  PS05 ------------------------------
+//   // return a vector of N+2 images: the two inputs plus N images that morphs
+//   // between im_before and im_after for the corresponding segments. 
+//   //im_before
+//   // should be the first image, im_after the last.
+//   vector<Image> morphedImages;
+//   //adding starting image
+//   morphedImages.push_back(im_before);
 
-    Image after = warp(im_after, segs_after, targetSegments, a, b, p);
-    Image before = warp(im_before, segs_before, targetSegments, a, b, p);
+//   for (int n = 1; n <= N; n++) {
+//     // creating img to be added
+//     Image imgN(im_before.width(), im_before.height(), im_before.channels());
+
+//     float t = n / float(N + 1); //time constant adjustment
+
+//     // build target
+//     vector<Segment> targetSegments;
+//     for (int i = 0; i < segs_before.size(); i++) {
+
+//       //creating segment by calculating p and q vectors using before and after segments
+//       Vec2f P = ((segs_after[i].getP() - segs_before[i].getP()) * t) + segs_before[i].getP();
+//       Vec2f Q = ((segs_after[i].getQ() - segs_before[i].getQ()) * t) + segs_before[i].getQ();
+
+//       targetSegments.push_back(Segment(P, Q));
+//     }
+
+//     Image after = warp(im_after, segs_after, targetSegments, a, b, p);
+//     Image before = warp(im_before, segs_before, targetSegments, a, b, p);
     
 
-    for (int i = 0; i < before.number_of_elements(); i++) {
-      //averaging location points from slides
-      imgN(i) = after(i) * t + before(i) * (1 - t);
-    }
+//     for (int i = 0; i < before.number_of_elements(); i++) {
+//       //averaging location points from slides
+//       imgN(i) = after(i) * t + before(i) * (1 - t);
+//     }
 
-    morphedImages.push_back(imgN);
-  }
-  //adding last photo
-  morphedImages.push_back(im_after);
-  return morphedImages;
-}
+//     morphedImages.push_back(imgN);
+//   }
+//   //adding last photo
+//   morphedImages.push_back(im_after);
+//   return morphedImages;
+// }

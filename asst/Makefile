@@ -2,6 +2,7 @@ NUMBER := 5
 OBJS=\
 $(BUILD_DIR)/basicImageManipulation.o \
 $(BUILD_DIR)/morphing.o \
+$(BUILD_DIR)/filtering.o \
 $(BUILD_DIR)/Image.o \
 $(BUILD_DIR)/lodepng.o
 

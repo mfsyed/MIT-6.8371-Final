@@ -9,6 +9,7 @@
 
 #include "morphing.h"
 #include <cassert>
+#include "filtering.h"
 
 using namespace std;
 
@@ -213,54 +214,50 @@ Image warp(const Image &im, const vector<Segment> &src_segs,
 }
 
 
+Image hybrid(const Image &im1, const Image &im2, float sigma, const vector<Segment> &src_segs,
+           const vector<Segment> &dst_segs){
+
+  //low pass filter using gaussian
+  //float sigma = 3.0;
+
+  Image im2warped = warp(im2, src_segs, dst_segs);
+
+  //im2warped.write("./Output/im2warped.png");
+
+  Image im1warped = warp(im1, src_segs, dst_segs);
+
+  //im1warped.write("./Output/im1warped.png");
+
+  Image im1Low = gaussianBlur_2D(im1warped, sigma);
+
+  //im1Low.write("./Output/lowpass.png");
+
+  
+  Image im2Gaussian = gaussianBlur_2D(im2warped, sigma*2);
+
+  //high pass filter: original
+  Image im2High = im2warped -im2Gaussian;
+
+  //im2High.write("./Output/highpass.png");
+
+  //average images
+
+  Image hybridImage(im1.width(), im1.height(), im1.channels());
+
+  for (int x = 0; x < im1.width(); x++){
+    for(int y = 0; y < im1.height(); y++){
+      for(int c = 0; c < im1.channels(); c++){
+        hybridImage(x, y, c) = (im1Low(x, y, c) + im2warped(x, y, c));
+        //experiment with color:
+        //hybridImage(x, y, c) = (im1Low(x, y, c) + im2warped(x, y, c)*(1/2)  + im2High(x, y, c));
+      }
+    }
+  }
+
+  cout << "done with hybrid" << endl;
+
+  return hybridImage;
 
 
 
-
-
-
-// vector<Image> morph(const Image &im_before, const Image &im_after,
-//                     const vector<Segment> &segs_before,
-//                     const vector<Segment> &segs_after, int N, float a, float b,
-//                     float p) {
-//   // --------- HANDOUT  PS05 ------------------------------
-//   // return a vector of N+2 images: the two inputs plus N images that morphs
-//   // between im_before and im_after for the corresponding segments. 
-//   //im_before
-//   // should be the first image, im_after the last.
-//   vector<Image> morphedImages;
-//   //adding starting image
-//   morphedImages.push_back(im_before);
-
-//   for (int n = 1; n <= N; n++) {
-//     // creating img to be added
-//     Image imgN(im_before.width(), im_before.height(), im_before.channels());
-
-//     float t = n / float(N + 1); //time constant adjustment
-
-//     // build target
-//     vector<Segment> targetSegments;
-//     for (int i = 0; i < segs_before.size(); i++) {
-
-//       //creating segment by calculating p and q vectors using before and after segments
-//       Vec2f P = ((segs_after[i].getP() - segs_before[i].getP()) * t) + segs_before[i].getP();
-//       Vec2f Q = ((segs_after[i].getQ() - segs_before[i].getQ()) * t) + segs_before[i].getQ();
-
-//       targetSegments.push_back(Segment(P, Q));
-//     }
-
-//     Image after = warp(im_after, segs_after, targetSegments, a, b, p);
-//     Image before = warp(im_before, segs_before, targetSegments, a, b, p);
-    
-
-//     for (int i = 0; i < before.number_of_elements(); i++) {
-//       //averaging location points from slides
-//       imgN(i) = after(i) * t + before(i) * (1 - t);
-//     }
-
-//     morphedImages.push_back(imgN);
-//   }
-//   //adding last photo
-//   morphedImages.push_back(im_after);
-//   return morphedImages;
-// }
+}

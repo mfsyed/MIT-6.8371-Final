@@ -104,9 +104,7 @@ Image warpBy1(const Image &im, const Segment &segBefore,
 Image warp(const Image &im, const vector<Segment> &segsBefore,
            const vector<Segment> &segsAfter, float a = 10.0, float b = 1.0,
            float p = 1.0);
-vector<Image> morph(const Image &im1, const Image &im2,
-                    const vector<Segment> &segsBefore,
-                    const vector<Segment> &segsAfter, int N = 1, float a = 10.0,
-                    float b = 1.0, float p = 1.0);
+Image hybrid(const Image &im1, const Image &im2, float sigma, const vector<Segment> &src_segs,
+           const vector<Segment> &dst_segs);
 
 #endif
